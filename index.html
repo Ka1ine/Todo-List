@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+
+        <py-script>
+            from js import console
+            from datetime import datetime
+            tasks = []
+
+            def atualiza_lista():
+                tasks_criadas = Element("tasks_criadas")
+                tasks_criadas.element.innerText = ""
+                for i in tasks:
+                    tasks_criadas.element.innerText += f"{i['content']}\n"
+
+            def cria_task(*ags, **kags):
+                input_task = Element("input_task")
+                task = input_task.element.value
+
+                y = list(filter(lambda x: x['content'] == task, tasks))
+
+                if len(y) > 0:
+                    message = Element('message')
+                    message.element.style.display = 'flex'
+                    return None
+
+                task = input_task.element.value
+                dict_task = {"task-id": len(task),
+                            "content": task,
+                            "date": datetime.now(),
+                            "status": "C"}
+                
+                tasks.append(dict_task)
+                input_task.element.value = ""
+                atualiza_lista()
+            
+            def add_task_event(e):
+                if e.key == "Enter":
+                    cria_task()
+
+
+            input_task = Element('input_task')
+            input_task.element.onkeypress = add_task_event
+        </py-script>
+
+        <main>
+            <div class="container">
+                <br>
+                <div style="display: none" id="message" class="alert alert-danger" role="alert">
+                    Já existe essa tarefa
+                </div>
+                <h3>Lista de Tarefa</h3>
+                <input id="input_task" type="text" placeholder="Digite uma tarefa" class="form-control">
+                <br>
+                <button id="btn_task" type="submit" class="btn btn-success" pys-onClick="cria_task">Enviar</button>
+                <hr>
+
+                <div class="row">
+                    <div class="col-md">
+                        <h3 style="color:orange">Criadas</h3>
+                        <div id="tasks_criadas">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md">
+                        <h3 style="color:green">Feitas</h3>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </body>
+</html>
